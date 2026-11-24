@@ -5,303 +5,207 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <meta name="theme-color" content="#0f766e" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="DVSA Driving Record" />
   <title>DVSA Ready to Pass? – Learning to drive record</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-    body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      -webkit-tap-highlight-color: transparent;
-    }
-    .skill-btn {
-      transition: transform 0.08s ease, box-shadow 0.12s ease, background-color 0.12s ease;
-    }
-    .skill-btn:active {
-      transform: scale(0.95);
-    }
-    @media print {
-      .no-print { display: none !important; }
-      body { background: #fff !important; }
-      .print-card { box-shadow: none !important; border: 1px solid #cbd5e1 !important; break-inside: avoid; }
-    }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
+    .skill-btn:active { transform: scale(0.95); }
+    @media print { .no-print { display: none !important; } body { background: #fff !important; } }
   </style>
 </head>
 <body class="bg-slate-100 text-slate-800 min-h-screen pb-24">
-
-  <!-- Top App Header -->
   <header class="bg-teal-800 text-white sticky top-0 z-30 shadow-md no-print">
     <div class="max-w-3xl mx-auto px-3.5 py-3 flex items-center justify-between gap-2">
       <div class="flex items-center gap-2.5 min-w-0">
-        <div class="bg-amber-400 text-slate-900 font-extrabold text-[10px] leading-tight px-2 py-1 rounded shrink-0 tracking-tight border border-amber-300">
-          READY<br/>TO<br/>PASS?
-        </div>
+        <div class="bg-amber-400 text-slate-900 font-extrabold text-[10px] leading-tight px-2 py-1 rounded shrink-0">READY<br/>TO<br/>PASS?</div>
         <div class="min-w-0">
           <h1 class="text-base sm:text-lg font-bold leading-tight truncate">Learning to drive record</h1>
           <p class="text-[11px] text-teal-100 truncate">DVSA 27-Skill Progress Tracker</p>
         </div>
       </div>
-
       <div class="flex items-center gap-1.5 shrink-0">
-        <button id="syncBtn" onclick="openSyncModal()" title="Cloud Sync & Devices"
-          class="flex items-center gap-1.5 bg-teal-900/90 hover:bg-teal-950 border border-teal-600/60 text-white text-xs font-semibold px-2.5 py-2 rounded-lg transition cursor-pointer">
+        <button onclick="openModal('syncModal')" class="flex items-center gap-1.5 bg-teal-900 border border-teal-600/60 text-white text-xs font-semibold px-2.5 py-2 rounded-lg cursor-pointer">
           <span id="syncDot" class="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
-          <span id="syncLabel" class="hidden sm:inline">Cloud Sync</span>
+          <span id="syncLabel" class="hidden sm:inline">Sign In</span>
         </button>
-
-        <button onclick="downloadStandaloneHtml()" title="Download HTML App File"
-          class="bg-teal-700 hover:bg-teal-600 text-white p-2 rounded-lg transition cursor-pointer" aria-label="Download App File">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-          </svg>
-        </button>
-
-        <button onclick="openGuideModal()" title="How to Use & Install"
-          class="bg-teal-700 hover:bg-teal-600 text-white p-2 rounded-lg transition cursor-pointer" aria-label="Help & Guide">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-          </svg>
-        </button>
-
-        <button onclick="window.print()" title="Print / Save as PDF"
-          class="bg-teal-700 hover:bg-teal-600 text-white p-2 rounded-lg transition cursor-pointer" aria-label="Print Record">
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/>
-          </svg>
-        </button>
+        <button onclick="downloadHtml()" title="Download" class="bg-teal-700 text-white p-2 rounded-lg cursor-pointer">⬇</button>
+        <button onclick="openModal('guideModal')" title="Guide" class="bg-teal-700 text-white p-2 rounded-lg cursor-pointer">ⓘ</button>
+        <button onclick="window.print()" title="Print" class="bg-teal-700 text-white p-2 rounded-lg cursor-pointer">🖨</button>
       </div>
     </div>
   </header>
 
-  <!-- Main Content Container -->
   <main class="max-w-3xl mx-auto px-3.5 pt-4 space-y-4">
-
-    <!-- Pupil Switcher & Profile Card -->
-    <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 print-card">
+    <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4">
       <div class="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-slate-100 no-print">
         <div class="flex items-center gap-2 flex-1 min-w-[200px]">
-          <label for="pupilSelect" class="text-xs font-bold uppercase tracking-wider text-slate-500 shrink-0">Pupil:</label>
-          <select id="pupilSelect" onchange="switchPupil(this.value)"
-            class="flex-1 bg-slate-50 border border-slate-300 text-slate-900 text-sm font-semibold rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-teal-600">
-          </select>
-          <button onclick="renameCurrentPupil()" title="Rename Pupil"
-            class="p-2 text-slate-600 hover:text-teal-700 hover:bg-teal-50 rounded-xl border border-slate-200 transition cursor-pointer">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
-            </svg>
-          </button>
+          <label class="text-xs font-bold uppercase text-slate-500">Pupil:</label>
+          <select id="pupilSelect" onchange="switchPupil(this.value)" class="flex-1 bg-slate-50 border border-slate-300 text-sm font-semibold rounded-xl px-3 py-2"></select>
+          <button onclick="renamePupil()" class="p-2 text-slate-600 rounded-xl border border-slate-200 cursor-pointer">✎</button>
         </div>
-
         <div class="flex items-center gap-1.5">
-          <button onclick="addNewPupil()"
-            class="bg-teal-700 hover:bg-teal-800 text-white text-xs font-semibold px-3 py-2 rounded-xl flex items-center gap-1 shadow-xs transition cursor-pointer">
-            <span>+ Pupil</span>
-          </button>
-          <button onclick="deleteCurrentPupil()" title="Delete Current Pupil"
-            class="text-rose-600 hover:bg-rose-50 text-xs font-semibold px-2.5 py-2 rounded-xl border border-rose-200 transition cursor-pointer">
-            Delete
-          </button>
+          <button onclick="addPupil()" class="bg-teal-700 text-white text-xs font-semibold px-3 py-2 rounded-xl cursor-pointer">+ Pupil</button>
+          <button onclick="deletePupil()" class="text-rose-600 text-xs font-semibold px-2.5 py-2 rounded-xl border border-rose-200 cursor-pointer">Delete</button>
         </div>
       </div>
-
-      <!-- Editable Pupil Details Grid -->
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-3">
-        <div>
-          <label class="block text-[11px] font-semibold text-slate-500 uppercase mb-1">Pupil Name</label>
-          <input id="pupilNameInput" type="text" placeholder="Enter pupil name" oninput="updatePupilMeta('name', this.value)"
-            class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 text-sm font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-teal-600" />
-        </div>
-        <div>
-          <label class="block text-[11px] font-semibold text-slate-500 uppercase mb-1">Instructor / Trainer</label>
-          <input id="instructorInput" type="text" placeholder="ADI / Trainer name" oninput="updatePupilMeta('instructor', this.value)"
-            class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 text-sm font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-teal-600" />
-        </div>
-        <div>
-          <label class="block text-[11px] font-semibold text-slate-500 uppercase mb-1">Driving Test Date</label>
-          <input id="testDateInput" type="date" onchange="updatePupilMeta('testDate', this.value)"
-            class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 text-sm font-medium focus:bg-white focus:outline-none focus:ring-2 focus:ring-teal-600" />
-        </div>
+        <div><label class="block text-[11px] font-semibold text-slate-500 uppercase mb-1">Pupil Name</label><input id="pupilNameInput" type="text" placeholder="Enter pupil name" oninput="updateMeta('name', this.value)" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 text-sm" /></div>
+        <div><label class="block text-[11px] font-semibold text-slate-500 uppercase mb-1">Instructor / Trainer</label><input id="instructorInput" type="text" placeholder="ADI / Trainer name" oninput="updateMeta('instructor', this.value)" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 text-sm" /></div>
+        <div><label class="block text-[11px] font-semibold text-slate-500 uppercase mb-1">Driving Test Date</label><input id="testDateInput" type="date" onchange="updateMeta('testDate', this.value)" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 text-sm" /></div>
       </div>
-
-      <!-- Readiness Summary Bar -->
-      <div class="mt-3.5 bg-slate-50 rounded-xl p-3 border border-slate-200/80">
-        <div class="flex items-center justify-between text-xs font-bold mb-1.5">
-          <span class="text-slate-700">Test Readiness (Level 4+): <span id="readyCountText" class="text-teal-700">0 / 27 skills</span></span>
-          <span id="readyPercentText" class="text-teal-800">0% Ready</span>
-        </div>
-        <div class="w-full bg-slate-200 h-2.5 rounded-full overflow-hidden">
-          <div id="readyProgressBar" class="bg-teal-600 h-full rounded-full transition-all duration-300" style="width: 0%"></div>
-        </div>
-        <div id="levelCountsRow" class="flex flex-wrap gap-x-3 gap-y-1 mt-2 text-[11px] text-slate-600 font-medium"></div>
+      <div class="mt-3.5 bg-slate-50 rounded-xl p-3 border border-slate-200">
+        <div class="flex justify-between text-xs font-bold mb-1.5"><span>Test Readiness (Level 4+): <span id="readyCount" class="text-teal-700">0 / 27 skills</span></span><span id="readyPct" class="text-teal-800">0% Ready</span></div>
+        <div class="w-full bg-slate-200 h-2.5 rounded-full overflow-hidden"><div id="readyBar" class="bg-teal-600 h-full transition-all" style="width:0%"></div></div>
+        <div id="levelCounts" class="flex flex-wrap gap-x-3 gap-y-1 mt-2 text-[11px] text-slate-600"></div>
       </div>
     </section>
 
-    <!-- 5-Stage Progress Legend -->
-    <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-3.5 print-card">
-      <div class="flex items-center justify-between mb-2">
-        <h2 class="text-xs font-extrabold uppercase tracking-wider text-slate-500">Tap a Level Number (1–5) on Any Skill</h2>
-        <span class="text-[11px] text-slate-400">Tap active level again to clear</span>
-      </div>
+    <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-3.5">
+      <div class="flex justify-between mb-2"><h2 class="text-xs font-extrabold uppercase text-slate-500">Tap a Level Number (1–5) on Any Skill</h2><span class="text-[11px] text-slate-400">Tap active again to clear</span></div>
       <div class="grid grid-cols-5 gap-1.5 text-center">
-        <div class="rounded-xl p-1.5 bg-rose-50 border border-rose-200">
-          <div class="text-xs font-extrabold text-rose-700">1</div>
-          <div class="text-[10px] font-semibold text-rose-800 leading-tight">Introduced</div>
-        </div>
-        <div class="rounded-xl p-1.5 bg-amber-50 border border-amber-200">
-          <div class="text-xs font-extrabold text-amber-700">2</div>
-          <div class="text-[10px] font-semibold text-amber-800 leading-tight">Under Prompt</div>
-        </div>
-        <div class="rounded-xl p-1.5 bg-sky-50 border border-sky-200">
-          <div class="text-xs font-extrabold text-sky-700">3</div>
-          <div class="text-[10px] font-semibold text-sky-800 leading-tight">Seldom Prompt</div>
-        </div>
-        <div class="rounded-xl p-1.5 bg-indigo-50 border border-indigo-200">
-          <div class="text-xs font-extrabold text-indigo-700">4</div>
-          <div class="text-[10px] font-semibold text-indigo-800 leading-tight">Independent</div>
-        </div>
-        <div class="rounded-xl p-1.5 bg-emerald-50 border border-emerald-200">
-          <div class="text-xs font-extrabold text-emerald-700">5</div>
-          <div class="text-[10px] font-semibold text-emerald-800 leading-tight">Test Ready</div>
-        </div>
+        <div class="rounded-xl p-1.5 bg-rose-50 border border-rose-200"><div class="text-xs font-extrabold text-rose-700">1</div><div class="text-[10px] font-semibold text-rose-800">Introduced</div></div>
+        <div class="rounded-xl p-1.5 bg-amber-50 border border-amber-200"><div class="text-xs font-extrabold text-amber-700">2</div><div class="text-[10px] font-semibold text-amber-800">Under Prompt</div></div>
+        <div class="rounded-xl p-1.5 bg-sky-50 border border-sky-200"><div class="text-xs font-extrabold text-sky-700">3</div><div class="text-[10px] font-semibold text-sky-800">Seldom Prompt</div></div>
+        <div class="rounded-xl p-1.5 bg-indigo-50 border border-indigo-200"><div class="text-xs font-extrabold text-indigo-700">4</div><div class="text-[10px] font-semibold text-indigo-800">Independent</div></div>
+        <div class="rounded-xl p-1.5 bg-emerald-50 border border-emerald-200"><div class="text-xs font-extrabold text-emerald-700">5</div><div class="text-[10px] font-semibold text-emerald-800">Test Ready</div></div>
       </div>
     </section>
 
-    <!-- Dynamic 27 DVSA Skills Container -->
     <div id="skillsContainer" class="space-y-4"></div>
 
-    <!-- Pupil Lesson Notes & Summary -->
-    <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 print-card">
-      <label for="pupilNotesInput" class="block text-xs font-extrabold uppercase tracking-wider text-slate-500 mb-1.5">
-        Lesson Notes, Focus Areas & Mock Test Feedback
-      </label>
-      <textarea id="pupilNotesInput" rows="3" placeholder="e.g. Practise emerging smoothly at angled junctions, mirror-signal-manoeuvre on dual carriageways..."
-        oninput="updatePupilMeta('notes', this.value)"
-        class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm focus:bg-white focus:outline-none focus:ring-2 focus:ring-teal-600"></textarea>
+    <section class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4">
+      <label class="block text-xs font-extrabold uppercase text-slate-500 mb-1.5">Lesson Notes, Focus Areas & Mock Test Feedback</label>
+      <textarea id="pupilNotesInput" rows="3" placeholder="Lesson notes..." oninput="updateMeta('notes', this.value)" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm"></textarea>
     </section>
   </main>
 
-  <!-- Cloud Sync & Devices Modal -->
-  <div id="syncModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 hidden items-end sm:items-center justify-center p-0 sm:p-4 no-print">
+  <div id="syncModal" class="fixed inset-0 bg-slate-900/60 z-50 hidden items-end sm:items-center justify-center p-0 sm:p-4 no-print">
     <div class="bg-white w-full sm:max-w-lg rounded-t-3xl sm:rounded-2xl shadow-2xl max-h-[92vh] overflow-y-auto p-5 space-y-4">
-      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-        <div>
-          <h3 class="text-lg font-bold text-slate-900">Cloud Sync & Devices</h3>
-          <p class="text-xs text-slate-500">Sync across your phone, tablet & computer</p>
-        </div>
-        <button onclick="closeSyncModal()" class="p-2 rounded-full hover:bg-slate-100 text-slate-500 cursor-pointer">✕</button>
+      <div class="flex justify-between border-b pb-3"><div><h3 class="text-lg font-bold">Cloud Sync & Devices</h3><p class="text-xs text-slate-500">Sync across phone & tablet</p></div><button onclick="closeModal('syncModal')" class="p-2 text-slate-500">✕</button></div>
+      <div class="rounded-xl p-3.5 border bg-slate-50 text-xs space-y-1">
+        <div class="flex justify-between"><span id="modalBadge" class="font-bold text-amber-700">FIREBASE READY</span><span id="modalMode" class="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-amber-100 text-amber-800">Local</span></div>
+        <p id="modalDetail" class="text-slate-600">Sign in or create an account below to sync your pupils across devices.</p>
       </div>
-
-      <!-- Current Sync Status Box -->
-      <div id="syncStatusCard" class="rounded-xl p-3.5 border bg-slate-50 border-slate-200 text-xs space-y-1">
-        <div class="flex items-center justify-between">
-          <span id="modalSyncBadge" class="font-bold text-slate-700">Checking status...</span>
-          <span id="modalSyncMode" class="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-slate-200 text-slate-700">Local</span>
-        </div>
-        <p id="modalSyncDetail" class="text-slate-600 leading-relaxed"></p>
-      </div>
-
-      <!-- Account Sign-In / Sign-Up (shown when Firebase is configured) -->
-      <div id="authSection" class="hidden space-y-3 bg-teal-50/70 border border-teal-200/80 rounded-2xl p-3.5">
-        <div class="text-xs font-bold text-teal-900">Link Phone & Tablet with Email Sign-In</div>
-        <p class="text-[11px] text-teal-800">Sign in with the same email & password on both devices so your pupils update automatically everywhere.</p>
+      <div class="space-y-3 bg-teal-50/70 border border-teal-200 rounded-2xl p-3.5">
         <div id="signedOutControls" class="space-y-2">
-          <input id="authEmail" type="email" placeholder="Instructor email (e.g., name@example.com)"
-            class="w-full bg-white border border-teal-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-600" />
-          <input id="authPassword" type="password" placeholder="Password (min 6 characters)"
-            class="w-full bg-white border border-teal-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-600" />
+          <input id="authEmail" type="email" placeholder="Instructor email" class="w-full bg-white border border-teal-300 rounded-xl px-3 py-2 text-sm" />
+          <input id="authPassword" type="password" placeholder="Password (min 6 characters)" class="w-full bg-white border border-teal-300 rounded-xl px-3 py-2 text-sm" />
           <div class="grid grid-cols-2 gap-2 pt-1">
-            <button onclick="signInEmail()" class="bg-slate-800 hover:bg-slate-900 text-white text-xs font-bold py-2.5 rounded-xl transition cursor-pointer">Sign In</button>
-            <button onclick="signUpEmail()" class="bg-teal-700 hover:bg-teal-800 text-white text-xs font-bold py-2.5 rounded-xl transition cursor-pointer">Create Account</button>
+            <button onclick="signInEmail()" class="bg-slate-800 text-white text-xs font-bold py-2.5 rounded-xl cursor-pointer">Sign In</button>
+            <button onclick="signUpEmail()" class="bg-teal-700 text-white text-xs font-bold py-2.5 rounded-xl cursor-pointer">Create Account</button>
           </div>
         </div>
-        <div id="signedInControls" class="hidden items-center justify-between gap-2 pt-1">
-          <div class="text-xs font-semibold text-teal-950 truncate" id="signedInUserLabel"></div>
-          <button onclick="signOutEmail()" class="bg-white hover:bg-rose-50 text-rose-700 border border-rose-200 text-xs font-bold px-3 py-1.5 rounded-xl cursor-pointer">Sign Out</button>
+        <div id="signedInControls" class="hidden items-center justify-between gap-2">
+          <div id="signedInUser" class="text-xs font-semibold text-teal-950 truncate"></div>
+          <button onclick="auth && auth.signOut()" class="bg-white text-rose-700 border border-rose-200 text-xs font-bold px-3 py-1.5 rounded-xl cursor-pointer">Sign Out</button>
         </div>
-        <p id="authMessage" class="text-xs font-medium text-rose-700 min-h-[16px]"></p>
-      </div>
-
-      <!-- Firebase Config Setup -->
-      <div class="space-y-2 border-t border-slate-100 pt-3">
-        <div class="flex items-center justify-between">
-          <label for="firebaseConfigInput" class="text-xs font-bold text-slate-700">Firebase Config JSON (Free Cloud Sync)</label>
-          <button onclick="clearFirebaseConfig()" class="text-[11px] text-rose-600 hover:underline font-semibold cursor-pointer">Reset Config</button>
-        </div>
-        <p class="text-[11px] text-slate-500 leading-relaxed">
-          Paste your Firebase Web App config below once, then tap <strong>Download App File</strong> so your saved file already includes your cloud keys for both your phone and tablet.
-        </p>
-        <textarea id="firebaseConfigInput" rows="5" placeholder='{"apiKey":"...","authDomain":"...","projectId":"...","appId":"..."}'
-          class="w-full font-mono text-[11px] bg-slate-50 border border-slate-300 rounded-xl p-2.5 focus:bg-white focus:outline-none focus:ring-2 focus:ring-teal-600"></textarea>
-        <button onclick="saveAndConnectFirebase()"
-          class="w-full bg-teal-700 hover:bg-teal-800 text-white text-xs font-bold py-2.5 rounded-xl shadow-xs transition cursor-pointer">
-          Connect & Enable Live Sync
-        </button>
+        <p id="authMsg" class="text-xs font-medium text-rose-700"></p>
       </div>
     </div>
   </div>
 
-  <!-- Help & Setup Guide Modal -->
-  <div id="guideModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 hidden items-end sm:items-center justify-center p-0 sm:p-4 no-print">
-    <div class="bg-white w-full sm:max-w-lg rounded-t-3xl sm:rounded-2xl shadow-2xl max-h-[90vh] overflow-y-auto p-5 space-y-4">
-      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-        <h3 class="text-lg font-bold text-slate-900">Quick Guide: Phone, Tablet & Cloud</h3>
-        <button onclick="closeGuideModal()" class="p-2 rounded-full hover:bg-slate-100 text-slate-500 cursor-pointer">✕</button>
-      </div>
-
-      <div class="space-y-3 text-xs text-slate-700 leading-relaxed">
-        <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
-          <p class="font-bold text-slate-900 mb-1">1. Install on Your Phone & Tablet</p>
-          <p>Open this page in <strong>Chrome</strong> (Android) or <strong>Safari</strong> (iPad/iPhone), tap the menu/share button, and choose <strong>Add to Home Screen</strong> or <strong>Install app</strong>. It works offline too!</p>
-        </div>
-
-        <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
-          <p class="font-bold text-slate-900 mb-1">2. Real-Time Sync Across Devices (Free Firebase)</p>
-          <ol class="list-decimal list-inside space-y-1">
-            <li>Go to <strong>console.firebase.google.com</strong> and create a free project.</li>
-            <li>Enable <strong>Authentication → Email/Password</strong> and create a <strong>Firestore Database</strong> (start in test/production mode with your rules).</li>
-            <li>Copy your Web App <strong>firebaseConfig</strong>, paste it into <strong>Cloud Sync</strong> here, and tap <strong>Connect & Enable Live Sync</strong>.</li>
-            <li>Create/sign in with the same email & password on both your phone and tablet.</li>
-          </ol>
-        </div>
-
-        <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
-          <p class="font-bold text-slate-900 mb-1">3. Export / Backup</p>
-          <p>Tap the <strong>Download</strong> icon in the top bar to save a standalone <code class="bg-slate-200 px-1 rounded">index.html</code> file, or the <strong>Print</strong> icon to save a clean PDF/paper record for any pupil.</p>
-        </div>
-      </div>
-
-      <button onclick="closeGuideModal()" class="w-full bg-slate-900 text-white text-xs font-bold py-2.5 rounded-xl cursor-pointer">Got It</button>
+  <div id="guideModal" class="fixed inset-0 bg-slate-900/60 z-50 hidden items-end sm:items-center justify-center p-0 sm:p-4 no-print">
+    <div class="bg-white w-full sm:max-w-lg rounded-t-3xl sm:rounded-2xl shadow-2xl p-5 space-y-3 text-xs">
+      <div class="flex justify-between border-b pb-2"><h3 class="text-base font-bold">Quick Guide</h3><button onclick="closeModal('guideModal')">✕</button></div>
+      <p>1. Tap <strong>Cloud Sync</strong> (top-right) and sign in with the same email & password on your phone and tablet.</p>
+      <p>2. Tap Chrome's <strong>⋮ → Add to home screen</strong> on both devices for a one-tap app icon.</p>
+      <button onclick="closeModal('guideModal')" class="w-full bg-slate-900 text-white font-bold py-2.5 rounded-xl">Got It</button>
     </div>
   </div>
 
   <script>
-    // DVSA Ready to Pass? Learning to Drive Record — 27 Skills across 6 Categories
-    const DVSA_CATEGORIES = [
-      {
-        title: "1. The Basics",
-        skills: [
-          { id: 1, name: "Legal requirements", desc: "Licence, insurance, MOT, road tax & vehicle roadworthiness." },
-          { id: 2, name: "Controls & instruments", desc: "Foot pedals, steering, indicators, switches, warning lights & gauges." },
-          { id: 3, name: "Moving away & stopping", desc: "Cockpit drill, mirror/blind-spot checks, moving off & stopping safely." },
-          { id: 4, name: "Safe positioning", desc: "Normal driving position on lane/road, keeping safe distance & lane discipline." }
-        ]
-      },
-      {
-        title: "2. Speed & Observation",
-        skills: [
-          { id: 5, name: "Using mirrors", desc: "Interior & exterior mirrors, timing checks before signalling, braking & changing direction." },
-          { id: 6, name: "Signals", desc: "Clear, timely indicators and arm signals when needed for other road users." },
-          { id: 7, name: "Anticipation & planning", desc: "Reading road ahead, spotting hazards early, planning speed & gear in good time." },
-          { id: 8, name: "Use of speed", desc: "Appropriate speed for road, traffic, weather & visibility; speed limits." }
-        ]
-      },
-      {
-        title: "3. Junctions, Roundabouts & Crossings",
-        skills: [
-          { id: 9, name: "Junctions", desc: "Approaching, emerging & turning left/right at open, closed, angled & T-junctions." },
-          { id: 10, name: "Roundabouts", desc: "Lane choice, signalling, observation & emerging safely at roundabouts & mini-roundabouts." },
-          { id: 11, name: "Pedestrian crossings", desc: "Zebra, pelican, puffin & toucan crossings; giving way to pedestr
+    const CATS = [
+      ["1. The Basics", [[1,"Legal requirements","Licence, insurance, MOT, tax & roadworthiness."],[2,"Controls & instruments","Pedals, steering, switches, warning lights & gauges."],[3,"Moving away & stopping","Cockpit drill, mirrors/blind spots, moving off & stopping safely."],[4,"Safe positioning","Normal road position, safe clearance & lane discipline."]]],
+      ["2. Speed & Observation", [[5,"Using mirrors","Interior/exterior mirrors before signalling, braking & turning."],[6,"Signals","Clear, timely indicators & arm signals."],[7,"Anticipation & planning","Reading road ahead, spotting hazards & planning early."],[8,"Use of speed","Safe speed for road, traffic, weather & limits."]]],
+      ["3. Junctions, Roundabouts & Crossings", [[9,"Junctions","Approaching, emerging & turning at all junction types."],[10,"Roundabouts","Lane choice, signalling, observation & emerging safely."],[11,"Pedestrian crossings","Zebra, pelican, puffin & toucan crossings."]]],
+      ["4. Road Rules & Passing", [[12,"Making progress","Appropriate pace without holding up traffic or rushing."],[13,"Following traffic","Safe 2-second gap & reading brake lights."],[14,"Lane discipline","Choosing & keeping the right lane on multi-lane roads."],[15,"Overtaking","Judging safe gaps, speed & returning safely."],[16,"Meeting traffic","Dealing with oncoming vehicles, parked cars & narrow roads."]]],
+      ["5. Manoeuvres", [[17,"Controlled stop","Stopping promptly & under full control."],[18,"Reverse / right-hand reverse","Reversing accurately with all-round observation."],[19,"Reverse park (bay / parallel)","Parking accurately in a bay or parallel with observation."],[20,"Turn in the road / U-turn","Turning around safely using forward & reverse gears."]]],
+      ["6. Road Types & Conditions", [[21,"Dual carriageways","Joining, cruising, lane changing & leaving safely."],[22,"Driving in the dark","Headlights, night glare & judging speed/distance."],[23,"Weather conditions","Adapting speed & gaps in rain, fog, ice or glare."],[24,"Passengers & vulnerable road users","Care around cyclists, riders, horses & pedestrians."],[25,"Independent driving","Following sat-nav or road signs safely."],[26,"Eco-safe driving","Smooth acceleration/braking & timely gear shifts."],[27,"Show me, tell me","Safety questions & in-car checks."]]]
+    ];
+    const ST = {
+      1:["bg-rose-600 text-white border-rose-700","bg-rose-50 text-rose-800 border-rose-200"],
+      2:["bg-amber-500 text-white border-amber-600","bg-amber-50 text-amber-800 border-amber-200"],
+      3:["bg-sky-600 text-white border-sky-700","bg-sky-50 text-sky-800 border-sky-200"],
+      4:["bg-indigo-600 text-white border-indigo-700","bg-indigo-50 text-indigo-800 border-indigo-200"],
+      5:["bg-emerald-600 text-white border-emerald-700","bg-emerald-50 text-emerald-800 border-emerald-200"]
+    };
+    const CFG = {
+      apiKey: "AIzaSyCcJn4NeVmdXWPkchipRRpR2HchMAlYAQw",
+      authDomain: "driving-record-c85f7.firebaseapp.com",
+      projectId: "driving-record-c85f7",
+      storageBucket: "driving-record-c85f7.firebasestorage.app",
+      messagingSenderId: "850216994376",
+      appId: "1:850216994376:web:2ac939b8ce58de6c2c3a7d",
+      measurementId: "G-8MMV5448SG"
+    };
+    let state = JSON.parse(localStorage.getItem("dvsa_rec") || "null") || { activeId: "p1", pupils: [{ id: "p1", name: "Sample Pupil", instructor: "", testDate: "", notes: "", skills: {} }] };
+    let db = null, auth = null, user = null, remoteLock = false;
+    const cur = () => state.pupils.find(p => p.id === state.activeId) || state.pupils[0];
+    const save = () => { localStorage.setItem("dvsa_rec", JSON.stringify(state)); if (!remoteLock && db && user) db.collection("drivingRecords").doc(user.uid).set(state, { merge: true }).catch(()=>{}); };
+
+    function render() {
+      const p = cur(), sel = document.getElementById("pupilSelect");
+      sel.innerHTML = state.pupils.map(x => `<option value="${x.id}" ${x.id===p.id?"selected":""}>${x.name||"Unnamed Pupil"}</option>`).join("");
+      document.getElementById("pupilNameInput").value = p.name || "";
+      document.getElementById("instructorInput").value = p.instructor || "";
+      document.getElementById("testDateInput").value = p.testDate || "";
+      document.getElementById("pupilNotesInput").value = p.notes || "";
+      const c = [0,0,0,0,0,0];
+      for (let i=1; i<=27; i++) c[p.skills[i]||0]++;
+      const rdy = c[4]+c[5], pct = Math.round(rdy/27*100);
+      document.getElementById("readyCount").textContent = `${rdy} / 27 skills`;
+      document.getElementById("readyPct").textContent = `${pct}% Ready`;
+      document.getElementById("readyBar").style.width = `${pct}%`;
+      document.getElementById("levelCounts").innerHTML = [1,2,3,4,5].map(n=>`<span>L${n}: <strong>${c[n]}</strong></span>`).join("") + `<span>Unset: <strong>${c[0]}</strong></span>`;
+      document.getElementById("skillsContainer").innerHTML = CATS.map(([title, skills]) => `
+        <section class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+          <div class="bg-slate-50 px-4 py-2.5 border-b border-slate-200"><h2 class="text-sm font-bold">${title}</h2></div>
+          <div class="divide-y divide-slate-100">${skills.map(([id, name, desc]) => {
+            const lv = p.skills[id] || 0;
+            return `<div class="p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+              <div><div class="flex items-baseline gap-2"><span class="text-xs font-extrabold text-teal-700 bg-teal-50 border border-teal-200 px-1.5 py-0.5 rounded-md">#${id}</span><h3 class="text-sm font-bold">${name}</h3></div><p class="text-xs text-slate-500 mt-0.5">${desc}</p></div>
+              <div class="grid grid-cols-5 gap-1.5 sm:w-64 shrink-0">${[1,2,3,4,5].map(n=>`<button type="button" onclick="setLvl(${id},${n})" class="skill-btn py-2 rounded-xl border text-xs font-extrabold cursor-pointer ${lv===n?ST[n][0]:ST[n][1]}">${n}</button>`).join("")}</div>
+            </div>`;
+          }).join("")}</div>
+        </section>`).join("");
+    }
+    function setLvl(id, n) { const p = cur(); p.skills[id] = p.skills[id]===n ? 0 : n; save(); render(); }
+    function updateMeta(k, v) { cur()[k] = v; save(); if (k==="name") document.getElementById("pupilSelect").selectedOptions[0].textContent = v || "Unnamed Pupil"; }
+    function switchPupil(id) { state.activeId = id; save(); render(); }
+    function addPupil() { const id = "p"+Date.now(); state.pupils.push({ id, name: "", instructor: "", testDate: "", notes: "", skills: {} }); state.activeId = id; save(); render(); }
+    function renamePupil() { const n = prompt("Pupil name:", cur().name||""); if (n!==null) { cur().name = n.trim(); save(); render(); } }
+    function deletePupil() { if (state.pupils.length<2) return alert("Keep at least one pupil."); if (confirm("Delete this pupil?")) { state.pupils = state.pupils.filter(x=>x.id!==cur().id); state.activeId = state.pupils[0].id; save(); render(); } }
+    function openModal(id) { const m = document.getElementById(id); m.classList.remove("hidden"); m.classList.add("flex"); }
+    function closeModal(id) { const m = document.getElementById(id); m.classList.add("hidden"); m.classList.remove("flex"); }
+    function downloadHtml() { const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob(["<!DOCTYPE html>\n"+document.documentElement.outerHTML], {type:"text/html"})); a.download = "index.html"; a.click(); }
+    function signInEmail() { auth.signInWithEmailAndPassword(document.getElementById("authEmail").value.trim(), document.getElementById("authPassword").value).catch(e=>document.getElementById("authMsg").textContent=e.message); }
+    function signUpEmail() { auth.createUserWithEmailAndPassword(document.getElementById("authEmail").value.trim(), document.getElementById("authPassword").value).then(()=>save()).catch(e=>document.getElementById("authMsg").textContent=e.message); }
+
+    render();
+    if (typeof firebase !== "undefined") {
+      firebase.initializeApp(CFG); auth = firebase.auth(); db = firebase.firestore();
+      auth.onAuthStateChanged(u => {
+        user = u;
+        document.getElementById("syncDot").className = "w-2.5 h-2.5 rounded-full " + (u ? "bg-emerald-400" : "bg-amber-400");
+        document.getElementById("syncLabel").textContent = u ? "Synced" : "Sign In";
+        document.getElementById("modalBadge").textContent = u ? "LIVE CLOUD SYNC ACTIVE" : "FIREBASE READY";
+        document.getElementById("modalMode").textContent = u ? "Signed In" : "Local";
+        document.getElementById("signedOutControls").classList.toggle("hidden", !!u);
+        document.getElementById("signedInControls").classList.toggle("hidden", !u);
+        document.getElementById("signedInControls").classList.toggle("flex", !!u);
+        if (u) {
+          document.getElementById("signedInUser").textContent = u.email;
+          db.collection("drivingRecords").doc(u.uid).onSnapshot(s => {
+            if (!s.exists) return save();
+            const d = s.data();
+            if (Array.isArray(d.pupils) && d.pupils.length) { remoteLock = true; state = d; localStorage.setItem("dvsa_rec", JSON.stringify(state)); render(); remoteLock = false; }
+          });
+        }
+      });
+    }
+  </script>
+</body>
+</html>
